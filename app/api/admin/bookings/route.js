@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 // Add this line to make the route dynamic
 export const dynamic = 'force-dynamic';
@@ -42,22 +40,34 @@ export async function PATCH(request, { params }) {
   }
 }
 
-const bookings = await prisma.booking.findMany({
-  include: {
-    user: {
-      select: {
-        name: true,
-        email: true,
+export async function GET() {
+  try {
+    const bookings = await prisma.booking.findMany({
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        vehicle: {
+          select: {
+            name: true,
+            model: true,
+          },
+        },
       },
-    },
-    vehicle: {
-      select: {
-        name: true,
-        model: true,
+      orderBy: {
+        createdAt: 'desc',
       },
-    },
-  },
-  orderBy: {
-    createdAt: 'desc',
-  },
-}); 
+    });
+    
+    return NextResponse.json(bookings);
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    return NextResponse.json(
+      { error: 'Error fetching bookings' },
+      { status: 500 }
+    );
+  }
+} 
