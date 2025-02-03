@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  bookings      Booking[]
+  logs          Log[]
+}
+
+model Vehicle {
+  id            String    @id @default(uuid())
+  name          String
+  model         String
+  year          Int
+  licensePlate  String    @unique
+  pricePerDay   Float
+  seatCount     Int
+  status        VehicleStatus @default(AVAILABLE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  bookings      Booking[]
+  images        VehicleImage[]
+}
+
+model VehicleImage {
+  id            String    @id @default(uuid())
+  url           String
+  vehicleId     String
+  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Booking {
+  id            String    @id @default(uuid())
+  startDate     DateTime
+  endDate       DateTime
+  status        BookingStatus @default(PENDING)
+  phoneNumber   String
+  address       String
+  userId        String
+  vehicleId     String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id])
+  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id])
+}
+
+model Log {
+  id            String    @id @default(uuid())
+  action        String
+  description   String
+  userId        String
+  createdAt     DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  BOOKED
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
