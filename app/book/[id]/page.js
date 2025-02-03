@@ -181,9 +181,7 @@ export default function BookVehicle({ params }) {
               <div className="mb-6">
                 <div className="relative w-full h-96">
                   <Image
-                    src={vehicle.images[selectedImage].url.startsWith('/') 
-                      ? vehicle.images[selectedImage].url 
-                      : `/${vehicle.images[selectedImage].url}`}
+                    src={vehicle.images[selectedImage].url}
                     alt={`${vehicle.name} - Image ${selectedImage + 1}`}
                     fill
                     className="object-cover"
@@ -203,7 +201,7 @@ export default function BookVehicle({ params }) {
                             : 'ring-1 ring-gray-200'}`}
                       >
                         <Image
-                          src={image.url.startsWith('/') ? image.url : `/${image.url}`}
+                          src={image.url}
                           alt={`${vehicle.name} thumbnail ${index + 1}`}
                           fill
                           className="object-cover"

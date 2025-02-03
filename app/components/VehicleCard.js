@@ -7,7 +7,7 @@ export default function VehicleCard({ vehicle, isLoggedIn }) {
       <div className="relative w-full h-48">
         {vehicle.images && vehicle.images.length > 0 ? (
           <Image
-            src={vehicle.images[0].url.startsWith("/") ? vehicle.images[0].url : `/${vehicle.images[0].url}`}
+            src={vehicle.images[0].url}
             alt={vehicle.name}
             fill
             className="object-cover"

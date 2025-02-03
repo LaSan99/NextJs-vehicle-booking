@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs/promises';
-import { mkdir } from 'fs/promises';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 export async function POST(request) {
   try {
@@ -17,27 +20,17 @@ export async function POST(request) {
       );
     }
 
+    // Convert file to base64
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64File = `data:${file.type};base64,${buffer.toString('base64')}`;
 
-    // Ensure uploads directory exists
-    const publicDir = path.join(process.cwd(), 'public', 'uploads');
-    try {
-      await fs.mkdir(publicDir, { recursive: true });
-    } catch (error) {
-      console.error('Error creating uploads directory:', error);
-    }
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(base64File, {
+      folder: 'vehicle-booking'
+    });
 
-    // Create unique filename
-    const fileName = `${uuidv4()}_${file.name}`;
-    const filePath = path.join(publicDir, fileName);
-    
-    await writeFile(filePath, buffer);
-    
-    // Return the URL that can be used to access the file
-    const fileUrl = `/uploads/${fileName}`;
-
-    return NextResponse.json({ url: fileUrl });
+    return NextResponse.json({ url: result.secure_url });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
