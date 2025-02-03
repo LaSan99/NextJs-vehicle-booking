@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Add this line to make the route dynamic
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     // Get user role from the request header (set by middleware)

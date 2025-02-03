@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Add this line to make the route dynamic
+export const dynamic = 'force-dynamic';
+
 export async function POST(request) {
   try {
     const userId = request.headers.get('x-user-id');
