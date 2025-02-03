@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { hashPassword } from '@/app/utils/auth';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   try {
-    const { email, password, name } = await request.json();
+    const { name, email, password } = await request.json();
 
     // Validate input
-    if (!email || !password || !name) {
+    if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -23,39 +23,32 @@ export async function POST(request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'User already exists' },
+        { error: 'Email already registered' },
         { status: 400 }
       );
     }
 
-    // Hash password and create user
-    const hashedPassword = await hashPassword(password);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
     const user = await prisma.user.create({
       data: {
+        name,
         email,
         password: hashedPassword,
-        name,
       },
     });
 
-    // Create log entry
-    await prisma.log.create({
-      data: {
-        action: 'REGISTER',
-        description: `User ${email} registered`,
-        userId: user.id,
-      },
-    });
-
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user;
-
-    return NextResponse.json(userWithoutPassword, { status: 201 });
+    return NextResponse.json(
+      { message: 'User registered successfully' },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Error registering user', details: error.message },
       { status: 500 }
     );
   }
-} 
+}
