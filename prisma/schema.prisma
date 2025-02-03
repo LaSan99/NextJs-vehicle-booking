@@ -74,8 +74,8 @@ enum Role {
 
 enum VehicleStatus {
   AVAILABLE
-  BOOKED
   MAINTENANCE
+  BOOKED
 }
 
 enum BookingStatus {

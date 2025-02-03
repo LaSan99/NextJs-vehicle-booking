@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
+export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   try {
-    const { name, model, year, licensePlate, images } = await request.json();
+    const { name, model, year, licensePlate, images, pricePerDay, seatCount } = await request.json();
 
     // Validate input
     if (!name || !model || !year || !licensePlate) {
@@ -22,10 +22,10 @@ export async function POST(request) {
         model,
         year,
         licensePlate,
+        pricePerDay: pricePerDay || 0,
+        seatCount: seatCount || 4,
         images: {
-          create: images.map(url => ({
-            url
-          }))
+          create: images?.map(url => ({ url })) || []
         }
       },
       include: {
@@ -37,7 +37,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Error creating vehicle:', error);
     return NextResponse.json(
-      { error: 'Error creating vehicle' },
+      { error: 'Error creating vehicle', details: error.message },
       { status: 500 }
     );
   }
@@ -54,7 +54,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching vehicles:', error);
     return NextResponse.json(
-      { error: 'Error fetching vehicles' },
+      { error: 'Error fetching vehicles', details: error.message },
       { status: 500 }
     );
   }
