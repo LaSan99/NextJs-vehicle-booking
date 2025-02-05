@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export default function Login() {
   const router = useRouter();
@@ -51,12 +52,29 @@ export default function Login() {
     }
   };
 
+  const fadeIn = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { duration: 0.6 }
+  };
+
+  const slideUp = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay: 0.2 }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 relative">
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      transition={{ duration: 0.8 }}
+      className="min-h-screen bg-gray-50 relative"
+    >
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src="/auth-bg.jpg" // Make sure to add this image to your public folder
+          src="/auth-bg.jpg"
           alt="Background"
           fill
           className="object-cover"
@@ -67,42 +85,67 @@ export default function Login() {
       </div>
 
       <div className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full">
-          <Link
-            href="/"
-            className="inline-flex items-center text-gray-200 hover:text-white mb-8 group transition-colors"
+        <motion.div 
+          variants={slideUp}
+          initial="initial"
+          animate="animate"
+          className="max-w-md w-full"
+        >
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
           >
-            <svg
-              className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+            <Link
+              href="/"
+              className="inline-flex items-center text-gray-200 hover:text-white mb-8 group transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Back to Home
-          </Link>
+              <svg
+                className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Back to Home
+            </Link>
+          </motion.div>
 
-          <div className="text-center">
+          <motion.div 
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            className="text-center"
+          >
             <h2 className="text-4xl font-bold text-white mb-2">Welcome Back</h2>
             <p className="text-gray-200 text-lg">
               Sign in to access your account
             </p>
-          </div>
+          </motion.div>
 
-          <div className="mt-8">
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-8"
+          >
             <div className="bg-white/10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20">
               <form className="space-y-6" onSubmit={handleSubmit}>
                 {error && (
-                  <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/50 text-red-100 px-4 py-3 rounded">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-red-500/20 backdrop-blur-sm border border-red-500/50 text-red-100 px-4 py-3 rounded"
+                  >
                     {error}
-                  </div>
+                  </motion.div>
                 )}
 
                 <div>
@@ -189,7 +232,12 @@ export default function Login() {
                 </div>
               </form>
 
-              <div className="mt-6">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-6"
+              >
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300/30" />
@@ -209,11 +257,11 @@ export default function Login() {
                     Create new account
                   </Link>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

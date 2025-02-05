@@ -9,6 +9,7 @@ import WhyChoose from "./components/WhyChoose";
 import DownloadApp from "./components/DownloadApp";
 import HeroSection from "./components/HeroSection";
 import VehicleCard from "./components/VehicleCard";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
@@ -36,6 +37,22 @@ export default function Home() {
     }
   };
 
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6 }
+  };
+
+  const staggerContainer = {
+    initial: {},
+    whileInView: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -50,12 +67,32 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
-      <HeroSection isLoggedIn={isLoggedIn} />
-      <WhyChoose />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        <HeroSection isLoggedIn={isLoggedIn} />
+      </motion.div>
+      
+      <motion.div
+        variants={fadeInUp}
+        initial="initial"
+        whileInView="whileInView"
+        viewport={{ once: true }}
+      >
+        <WhyChoose />
+      </motion.div>
 
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8" id="vehicles">
         {!isLoggedIn && (
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-500 p-6 mb-12 rounded-lg shadow-md">
+          <motion.div
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="whileInView"
+            viewport={{ once: true }}
+            className="bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-500 p-6 mb-12 rounded-lg shadow-md"
+          >
             <div className="flex items-center">
               <div className="ml-4">
                 <p className="text-lg text-blue-700">
@@ -66,34 +103,62 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
-        <div className="flex justify-between items-center mb-12">
+        <motion.div
+          variants={fadeInUp}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={{ once: true }}
+          className="flex justify-between items-center mb-12"
+        >
           <h1 className="text-4xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
             Available Vehicles
           </h1>
           <div className="bg-blue-50 rounded-full px-4 py-2">
             <span className="text-blue-600 font-medium">{vehicles.length} vehicles available</span>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {vehicles.map((vehicle) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} isLoggedIn={isLoggedIn} />
+            <motion.div
+              key={vehicle.id}
+              variants={fadeInUp}
+            >
+              <VehicleCard vehicle={vehicle} isLoggedIn={isLoggedIn} />
+            </motion.div>
           ))}
-        </div>
-
-        {/* test */}
+        </motion.div>
 
         {vehicles.length === 0 && (
-          <div className="text-center py-12">
+          <motion.div
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="whileInView"
+            viewport={{ once: true }}
+            className="text-center py-12"
+          >
             <p className="text-xl text-gray-600">No vehicles available at the moment.</p>
-          </div>
+          </motion.div>
         )}
       </main>
 
-      <DownloadApp />
+      <motion.div
+        variants={fadeInUp}
+        initial="initial"
+        whileInView="whileInView"
+        viewport={{ once: true }}
+      >
+        <DownloadApp />
+      </motion.div>
       <Footer />
     </div>
   );
